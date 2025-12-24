@@ -1,0 +1,34 @@
+# Render Blueprint 配置文件
+# 文档参考：https://render.com/docs/blueprint-spec
+services:
+  # 定义 Node.js 服务
+  - type: web
+    name: lounge-bot-new
+    env: node
+    region: oregon # 可选：oregon / frankfurt / singapore / ohio
+    plan: free # 免费计划，也可改为 starter（付费）
+    branch: main # 代码仓库的分支名
+    rootDir: . # 代码根目录（如果bot在子目录，填写子目录名）
+    buildCommand: npm install # 构建命令（安装依赖）
+    startCommand: node lounge_bot_new_node.js # 启动命令（对应你的bot文件名）
+    # 环境变量（可选，可在 Render 控制台手动配置）
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WS_SERVER
+        value: wss://hack.chat/chat-ws
+      - key: BOT_CHANNEL
+        value: lounge
+      - key: BOT_NAME
+        value: sunldigv3_bot
+    # 健康检查（可选，bot是长连接服务，简单检查进程是否存活）
+    healthCheckPath: /health
+    # 自动重启（可选，进程崩溃时自动重启）
+    autoDeploy: true # 代码推送后自动部署
+    restartPolicy: always # 始终重启（保证bot持续运行）
+
+# 可选：如果需要持久化聊天记录，添加磁盘挂载（仅付费计划支持）
+# disks:
+#   - name: chat-history
+#     mountPath: /var/chat-history
+#     sizeGB: 1 # 磁盘大小（GB）
